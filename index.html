@@ -13,63 +13,202 @@
         }
 
         img:hover {
-            filter: hue-rotate(90deg);
+            filter: grayscale(100%);
         }
 
         div {
             display:inline-block;
         }
+
+        .new-remix-btn {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            z-index: 2147483647;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 11px 22px;
+            cursor: pointer;
+            color: #141414;
+            background: rgba(252, 250, 246, 0.88);
+            border: 1px solid rgba(20, 20, 20, 0.28);
+            border-radius: 999px;
+            box-shadow:
+                0 1px 0 rgba(255, 255, 255, 0.65) inset,
+                0 6px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition:
+                transform 0.18s ease,
+                box-shadow 0.22s ease,
+                background 0.22s ease,
+                color 0.22s ease,
+                border-color 0.22s ease;
+        }
+
+        .new-remix-btn__label {
+            letter-spacing: 0.35em;
+            margin-right: -0.35em;
+        }
+
+        .new-remix-btn:hover {
+            color: #faf8f4;
+            background: #141414;
+            border-color: #141414;
+            box-shadow:
+                0 1px 0 rgba(255, 255, 255, 0.06) inset,
+                0 10px 28px rgba(0, 0, 0, 0.22);
+            transform: translateY(-2px);
+        }
+
+        .new-remix-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.16);
+        }
     </style>
 </head>
 
 <body>
-    <div class="credit">This website is based on the design of the <a href="https://enzomari.com/">Enzo Mari archive</a> by <a href="https://jon-l.com/">Jon Lucas</a>.</div>
-    
     <script>
-        // define your "batch of images" in an array
-       var images = [
-                "<img src='images/horse_1.jpg'>",
-                "<img src='images/horse_2.jpg'>",
-                "<img src='images/horse_3.jpg'>",
-                "<img src='images/horse_4.jpg'>",
-                "<img src='images/horse_5.jpg'>",
-                "<img src='images/horse_6.jpg'>",
-                "<img src='images/horse_7.jpg'>",
-                "<img src='images/horse_8.jpg'>",
-            ]
+        var imagePaths = [
+            'images/IMG_4334.JPG',
+            'images/IMG_4338.JPG',
+            'images/IMG_4341.JPG',
+            'images/IMG_4343.JPG',
+            'images/IMG_4349.JPG',
+            'images/IMG_4351.JPG',
+            'images/IMG_4356.JPG',
+            'images/IMG_4368.JPG',
+            'images/IMG_4370.JPG',
+            'images/IMG_4373.JPG',
+            'images/IMG_4378.JPG',
+            'images/IMG_4384 3.JPG',
+            'images/IMG_4389.JPG',
+            'images/IMG_4390.JPG',
+            'images/IMG_4392.JPG',
+            'images/IMG_4393.JPG',
+            'images/IMG_4395.JPG',
+            'images/IMG_4400.JPG',
+            'images/IMG_4402.JPG',
+            'images/IMG_4403.JPG',
+            'images/IMG_4404.JPG',
+            'images/IMG_4405.JPG',
+            'images/IMG_4412.JPG',
+            'images/IMG_4413.JPG',
+            'images/IMG_4418.JPG',
+            'images/IMG_4425.JPG',
+            'images/IMG_4428 3.JPG',
+            'images/IMG_4434.JPG',
+            'images/IMG_4435 3.JPG',
+            'images/IMG_4450.JPG',
+            'images/IMG_4453.JPG',
+            'images/IMG_4454.JPG',
+            'images/IMG_4459.JPG',
+            'images/IMG_4460.JPG'
+        ];
 
-        // this function randomly picks an image from the batch
-        function random_image() {
-            return Math.floor(Math.random() * images.length);
+        var stackZ = 1;
+
+        function pickRandomPath() {
+            return imagePaths[Math.floor(Math.random() * imagePaths.length)];
         }
 
-        // this function adds the randomly-selected image to the page
+        function placeWithinViewport(wrapper, img) {
+            var vw = window.innerWidth;
+            var vh = window.innerHeight;
+            var iw = img.offsetWidth;
+            var ih = img.offsetHeight;
+            var bleed = Math.min(vw, vh) * 0.025;
+            var leftA = -bleed;
+            var leftB = vw - iw + bleed;
+            var topA = -bleed;
+            var topB = vh - ih + bleed;
+            var minLeft = Math.min(leftA, leftB);
+            var maxLeft = Math.max(leftA, leftB);
+            var minTop = Math.min(topA, topB);
+            var maxTop = Math.max(topA, topB);
+            var spanL = maxLeft - minLeft;
+            var spanT = maxTop - minTop;
+            wrapper.style.left = (minLeft + (spanL > 0 ? Math.random() * spanL : 0)) + 'px';
+            wrapper.style.top = (minTop + (spanT > 0 ? Math.random() * spanT : 0)) + 'px';
+            var deg = (Math.random() - 0.5) * 20;
+            wrapper.style.transform = 'rotate(' + deg + 'deg)';
+        }
+
         function add_image() {
+            var wrapper = document.createElement('div');
+            wrapper.style.position = 'fixed';
+            wrapper.style.zIndex = String(stackZ++);
+            wrapper.style.transformOrigin = 'center center';
+            wrapper.style.opacity = '0';
 
-            // first you make a new div for the image.
-            var new_image = document.createElement('div');
+            var img = document.createElement('img');
+            img.alt = '';
+            img.style.display = 'block';
+            img.style.maxHeight = 'none';
 
-            // then you set the div's inner-HTML, ie its content, to the chosen img tag
-            new_image.innerHTML = images[random_image()];
+            var laidOut = false;
 
-            // these two lines pick a random width for the image.
-            // 300 is the MAX width, and 100 is the MIN width.
-            var random_width = Math.floor(Math.random() * (300 - 100 + 1) + 100);
-            var random_width_pixels = random_width + "px";
+            function layoutAndReveal() {
+                if (laidOut) return;
+                if (!img.naturalWidth) return;
+                laidOut = true;
+                img.removeEventListener('load', layoutAndReveal);
 
-            // assign that random width to the new image
-            new_image.style.width = random_width_pixels;
+                var vw = window.innerWidth;
+                var vh = window.innerHeight;
+                var edge = Math.min(vw, vh);
+                var minW = Math.max(130, edge * 0.22);
+                var maxW = Math.min(640, vw * 1.03, vh * 1.03);
+                if (maxW <= minW) maxW = Math.min(420, minW + Math.max(40, edge * 0.12));
+                var w = minW + Math.random() * (maxW - minW);
+                img.style.width = w + 'px';
+                img.style.height = 'auto';
+                placeWithinViewport(wrapper, img);
 
-            // add the new image to the document's body (so it's visible!)
-            document.body.prepend(new_image);
+                function show() {
+                    wrapper.style.opacity = '1';
+                }
 
-            // last step! set up the click. 
-            // You want your image to 'listen' for clicks. When its clicked, it adds a new image.
-            new_image.addEventListener('click', add_image);
+                if (img.decode) {
+                    img.decode().then(show).catch(show);
+                } else {
+                    requestAnimationFrame(show);
+                }
+            }
+
+            img.addEventListener('load', layoutAndReveal);
+            img.src = pickRandomPath();
+
+            wrapper.appendChild(img);
+            document.body.appendChild(wrapper);
+
+            if (img.complete && img.naturalWidth) {
+                layoutAndReveal();
+            }
         }
 
-        // so that the first image appears when the page load, run the function once.
-        add_image();
+        (function init() {
+            document.body.style.margin = '0';
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+            document.body.style.minHeight = '100vh';
+
+            var newBtn = document.createElement('button');
+            newBtn.type = 'button';
+            newBtn.className = 'new-remix-btn';
+            newBtn.innerHTML = '<span class="new-remix-btn__label">new</span>';
+            newBtn.setAttribute('aria-label', 'Add new image');
+            newBtn.addEventListener('click', add_image);
+            document.body.appendChild(newBtn);
+
+            add_image();
+        })();
     </script>
 </body>
 
