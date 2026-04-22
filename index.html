@@ -113,6 +113,7 @@
         ];
 
         var stackZ = 1;
+        var imageWrappers = [];
 
         function pickRandomPath() {
             return imagePaths[Math.floor(Math.random() * imagePaths.length)];
@@ -187,6 +188,14 @@
 
             wrapper.appendChild(img);
             document.body.appendChild(wrapper);
+
+            imageWrappers.push(wrapper);
+            if (imageWrappers.length > 25) {
+                var oldest = imageWrappers.shift();
+                if (oldest && oldest.parentNode) {
+                    oldest.remove();
+                }
+            }
 
             if (img.complete && img.naturalWidth) {
                 layoutAndReveal();
